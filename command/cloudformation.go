@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -35,9 +36,9 @@ var cloudformationCmd = &cobra.Command{
 
 		for _, region := range regions {
 
-			go func(region string) {
+			go func(cfg aws.Config, region string, writer *file.Writer) {
 
-				cfg := cfg.Copy()
+				cfg = cfg.Copy()
 				cfg.Region = region
 
 				c := cloudformation.New(cfg)
@@ -62,7 +63,7 @@ var cloudformationCmd = &cobra.Command{
 
 				}
 
-			}(region)
+			}(cfg, region, writer)
 
 		}
 
